@@ -16,6 +16,8 @@ import { TemplateFileTree } from "@/modules/playground/components/playground-exp
 import { useFileExplorer } from "@/modules/playground/hooks/use-file-explorer";
 import { usePlayground } from "@/modules/playground/hooks/use-playground";
 import { TemplateFile } from "@/modules/playground/lib/path-to-json";
+import WebContainerPreview from "@/modules/webcontainer/components/webcontainer-preview";
+import { useWebContainer } from "@/modules/webcontainer/hooks/use-webcontainer";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Bot, FileText, Save, Settings, X } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -37,6 +39,15 @@ const MainPlaygroundPage = () => {
     setPlaygroundId,
     setOpenFiles,
   } = useFileExplorer();
+
+  const {
+    serverUrl,
+    isLoading: containerLoading,
+    error: containerError,
+    instance,
+    writeFileSync,
+    // @ts-ignore
+  } = useWebContainer({ templateData });
 
   useEffect(() => {
     setPlaygroundId(id);
@@ -204,6 +215,23 @@ const MainPlaygroundPage = () => {
                         onContentChange={() => {}}
                       />
                     </ResizablePanel>
+
+                    {isPreviewVisible && (
+                      <>
+                        <ResizableHandle />
+                        <ResizablePanel defaultSize={50}>
+                          <WebContainerPreview
+                            templateData={templateData}
+                            instance={instance}
+                            writeFileSync={writeFileSync}
+                            isLoading={containerLoading}
+                            error={containerError}
+                            serverUrl={serverUrl!}
+                            forceResetup={false}
+                          />
+                        </ResizablePanel>
+                      </>
+                    )}
                   </ResizablePanelGroup>
                 </div>
               </div>
