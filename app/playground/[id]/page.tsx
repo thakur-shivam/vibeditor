@@ -22,9 +22,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import LoadingStep from "@/modules/playground/components/loader";
-import PlaygroundEditor from "@/modules/playground/components/playground-editor";
+import { PlaygroundEditor } from "@/modules/playground/components/playground-editor";
 import { TemplateFileTree } from "@/modules/playground/components/playground-explorer";
 import ToggleAI from "@/modules/playground/components/toggle-ai";
+import { useAISuggestions } from "@/modules/playground/hooks/use-ai-suggestion";
 import { useFileExplorer } from "@/modules/playground/hooks/use-file-explorer";
 import { usePlayground } from "@/modules/playground/hooks/use-playground";
 import { findFilePath } from "@/modules/playground/lib";
@@ -51,8 +52,10 @@ import { toast } from "sonner";
 const MainPlaygroundPage = () => {
   const { id } = useParams<{ id: string }>();
   const [isPreviewVisible, setIsPreviewVisible] = useState(true);
-  const { playgroundData, templateData, isLoading, error, saveTemplateData } =
-    usePlayground(id);
+  const { playgroundData, templateData, isLoading, error, saveTemplateData } = usePlayground(id);
+
+  const aiSuggestions = useAISuggestions();
+
   const {
     activeFileId,
     closeAllFiles,
@@ -401,9 +404,9 @@ const MainPlaygroundPage = () => {
               </Tooltip>
 
               <ToggleAI 
-                isEnabled={false}
-                onToggle={() => {}}
-                suggestionLoading={false}
+                isEnabled={aiSuggestions.isEnabled}
+                onToggle={aiSuggestions.toggleEnabled}
+                suggestionLoading={aiSuggestions.isLoading}
               />
 
               <DropdownMenu>
@@ -487,9 +490,15 @@ const MainPlaygroundPage = () => {
                       <PlaygroundEditor
                         activeFile={activeFile}
                         content={activeFile?.content || ""}
-                        onContentChange={(value) => {
+                        onContentChange={(value) => 
                           activeFileId && updateFileContent(activeFileId, value)
-                        }}
+                        }
+                        suggestion={aiSuggestions.suggestion}
+                        suggestionLoading={aiSuggestions.isLoading}
+                        suggestionPosition={aiSuggestions.position}
+                        onAcceptSuggestion={(editor, monaco) => aiSuggestions.acceptSuggestion(editor, monaco)}
+                        onRejectSuggestion={(editor) => aiSuggestions.rejectSuggestion(editor)}
+                        onTriggerSuggestion={(type, editor) => aiSuggestions.fetchSuggestion(type, editor)}
                       />
                     </ResizablePanel>
 
