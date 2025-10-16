@@ -3,6 +3,6 @@ export const templatePaths = {
     NEXTJS: "/vibeditor-starters/nextjs-new",
     EXPRESS: "/vibeditor-starters/express-simple",
     VUE: "/vibeditor-starters/vue",
-    HONE: "/vibeditor-starters/hono-nodejs-starter",
+    HONO: "/vibeditor-starters/hono-nodejs-starter",
     ANGULAR: "/vibeditor-starters/angular"
 }
