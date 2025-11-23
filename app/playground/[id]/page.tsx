@@ -81,7 +81,7 @@ const MainPlaygroundPage = () => {
     error: containerError,
     instance,
     writeFileSync,
-    // @ts-ignore
+    // @ts-expect-error
   } = useWebContainer({ templateData });
 
   const lastSyncedContent = useRef<Map<string, string>>(new Map());
@@ -193,9 +193,10 @@ const MainPlaygroundPage = () => {
           JSON.stringify(latestTemplateData)
         );
 
-        // @ts-ignore
+        // @ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const updateFileContent = (items: any[]) =>
-          // @ts-ignore
+          // @ts-expect-error
           items.map((item) => {
             if ("folderName" in item) {
               return { ...item, items: updateFileContent(item.items) };
@@ -221,7 +222,7 @@ const MainPlaygroundPage = () => {
         }
 
         const newTemplateData = await saveTemplateData(updatedTemplateData);
-        setTemplateData(newTemplateData || updatedTemplateData);
+        setTemplateData(newTemplateData! || updatedTemplateData);
 
         // Update open files
         const updatedOpenFiles = openFiles.map((f) =>

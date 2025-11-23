@@ -56,7 +56,8 @@ export async function POST(request: NextRequest) {
         generatedAt: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
+    
+  } catch (error: any) { // eslint-disable-next-line @typescript-eslint/no-explicit-any
     console.error("Context analysis error:", error);
     return NextResponse.json(
       { error: "Internal server error", message: error.message },
